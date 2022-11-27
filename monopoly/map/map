@@ -1,0 +1,43 @@
+go
+terrain 1:1
+community_chest
+terrain 1:2
+taxe 1
+railroad 1
+terrain 2:1
+chance
+terrain 2:2
+terrain 2:3
+
+jail
+terrain 3:1
+company 1
+terrain 3:2
+terrain 3:3
+railroad 2
+terrain 4:1
+community_chest
+terrain 4:2
+terrain 4:3
+
+free_parking
+terrain 5:1
+chance
+terrain 5:2
+terrain 5:3
+railroad 3
+terrain 6:1
+terrain 6:2
+company 2
+terrain 6:3
+
+go_jail
+terrain 7:1
+terrain 7:2
+community_chest
+terrain 7:3
+railroad 4
+chance
+terrain 8:1
+taxe 2
+terrain 8:2

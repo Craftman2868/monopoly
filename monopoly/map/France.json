@@ -1,0 +1,63 @@
+{
+    "name": "Paris",
+    "terrain": [
+        [
+            "Boulevard de Belleville",
+            "Rue Lecourbe"
+        ],
+        [
+            "Rue de Vaugirard",
+            "Rue de Courcelle",
+            "Avenue de la République"
+        ],
+        [
+            "Boulevard de la Vilette",
+            "Avenue de Neuilly",
+            "Rue de Paradis"
+        ],
+        [
+            "Avenue Mozart",
+            "Boulevard Saint-Michel",
+            "Place Pigale"
+        ],
+        [
+            "Avenue Matignon",
+            "Boulevard Malherbes",
+            "Avenue Henri-Martin"
+        ],
+        [
+            "Faubourg Saint-Honoré",
+            "Place de la Bourse",
+            "Rue La Fayette"
+        ],
+        [
+            "Aveneue de Breteuil",
+            "Avenue Foch",
+            "Boulevard des Capucines"
+        ],
+        [
+            "Avenue des Champs-Elysées",
+            "Rue de la Paix"
+        ]
+    ],
+    "railroad": [
+        "Gare Montparnasse",
+        "Gare de Lyon",
+        "Gare du Nord",
+        "Gare Saint-Lazare"
+    ],
+    "company": [
+        "Compagnie de distribution d'électicité",
+        "Compagnie de distribution des eaux"
+    ],
+    "taxe": [
+        "Impôts sur le revenu",
+        "Taxe de lux"
+    ],
+    "corners": [
+        "Départ",
+        "Prison",
+        "Parc gratuit",
+        "Allez en prison"
+    ]
+}
