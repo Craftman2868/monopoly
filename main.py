@@ -2,7 +2,7 @@ from monopoly import Monopoly
 
 
 def main():
-    game = Monopoly()
+    game = Monopoly(lang="french", map="France")
 
     game.run()
 

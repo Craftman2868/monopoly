@@ -1,25 +1,24 @@
 {
-    "name": "London",
+    "name": "Paris",
     "terrain": [
         [
-            "Mediteranean avenue",
-            "Baltic avenue"
+            "Boulevard de Belleville",
+            "Rue Lecourbe"
         ],
         [
-            "Oriental avenue",
-            "Vermont avenue",
-            "Connecticut avenue"
+            "Rue de Vaugirard",
+            "Rue de Courcelle",
+            "Avenue de la République"
         ],
         [
-            "St-Charles avenue",
-            "States avenue",
-            "Virginia avenue"
+            "Boulevard de la Vilette",
+            "Avenue de Neuilly",
+            "Rue de Paradis"
         ],
         [
-            "St-James place",
-            "Tennessee avenue",
-            "New-York avenue",
-            "#### TODO"
+            "Avenue Mozart",
+            "Boulevard Saint-Michel",
+            "Place Pigale"
         ],
         [
             "Avenue Matignon",
@@ -32,7 +31,7 @@
             "Rue La Fayette"
         ],
         [
-            "Avenue de Breteuil",
+            "Aveneue de Breteuil",
             "Avenue Foch",
             "Boulevard des Capucines"
         ],
@@ -55,9 +54,16 @@
         "Impôts sur le revenu",
         "Taxe de lux"
     ],
-
+    "corners": [
+        "Départ",
+        "Prison",
+        "Parc gratuit",
+        "Allez en prison"
+    ],
     "go": "Départ",
     "jail": "Prison",
     "free_parking": "Parc gratuit",
-    "go_jail": "Allez en prison"
+    "go_jail": "Allez en prison",
+    "chance": "Chance",
+    "community_chest": "Caisse de communauté"
 }
