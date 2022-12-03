@@ -8,7 +8,7 @@
         "Avancez jusqu'à la gare la plus proche, si elle est à vendre, vous pouvez l'acheter au près de la banque, si elle est déjà achetée, payez 2 fois le loyer indiqué",
         "Avancez jusqu'à la compagnie de service publique la plus proche, si elle est à vendre, vous pouvez l'acheter au près de la banque, si elle est déjà achetée, payez 10 fois le loyer indiqué",
         "La banque vous verse une dividande de M50",
-        "Vous êtes libéré(e) de prison !",
+        "Vous êtes libéré(e) de prison ! (Vous pouvez garder cette carte et l'utiliser quand vous êtes en prison)",
         "Reculez de 3 cases",
         "Allez en prison. Ne passez pas par la case départ, allez directement en prison",
         "Vous faites des réparations, payez M25 par maison et M100 par hôtel",
@@ -22,7 +22,7 @@
         "... recevez M200",
         "... payer M50",
         "... recevez M50",
-        "Vous êtes libéré(e) de prison !",
+        "Vous êtes libéré(e) de prison ! (Vous pouvez garder cette carte et l'utiliser quand vous êtes en prison)",
         "Allez en prison. Ne passez pas par la case départ, allez directement en prison",
         "... recevez M100",
         "... recevez M20",
@@ -35,11 +35,11 @@
         "... payer M10",
         "... recevez M100"
     ],
-    "askBuy": "Voulez-vous acheter {name} pour M{price} ?",
+    "askBuy": "Voulez-vous acheter {space.render} pour M{space.price} ?",
     "pressForRollDices": "Appuyez sur n'importe quelle touche pour lancer les dés...",
     "player": "Joueur {id}",
-    "buyRent": "Vous êtes arrivé(e) sur {space}, vous devez payer M{price} de loyer à {owner}",
-    "buyTaxe": "Vous êtes arrivé(e) sur {space}, vous devez payer une taxe de M{price}",
+    "buyRent": "Vous êtes arrivé(e) sur {space.render}, vous devez payer M{rent} de loyer à {space.owner}",
+    "buyTaxe": "Vous êtes arrivé(e) sur {space.render}, vous devez payer une taxe de M{space.amount}",
     "salary": "Bravo ! Vous avez reçu M200 de salaire en passant par la case départ",
     "playAgain": "Vous avez fait un double, vous devez donc rejouer",
     "space": "Case",
@@ -47,5 +47,30 @@
     "score": "Score",
     "playerHasToDrawChanceCard": "Vous êtes arrivé(e) sur la case Chance, vous devez piocher une carte Chance",
     "playerHasToDrawCommunityChestCard": "Vous êtes arrivé(e) sur la case Caisse de Communauté, vous devez piocher une carte Caisse de Communauté",
-    "playerDrawnCard": "Vous avez piocher la carte '{card}'"
+    "playerDrawnCard": "Vous avez piocher la carte '{card}'",
+    "playerInJail": "Vous êtes en prison !",
+    "visitOnly": "Simple visite",
+    "playerGoJailDouble": "Vous avez fait 3 doubles de suite, allez en prison !",
+    "maxJailTurn": "Vous avez tenter 3 fois de faire un double pour sortir de prison, vous devez payer M50 pour sortir",
+    "playerMortgageProp": "Vous avez hypothéquer {space.render} pour M{space.mortgagePrice}",
+    "playerLiftMortgageProp": "Vous avez lever l'hypothèque de {space.render} pour M{space.liftMortgagePrice}",
+
+    "menu": {
+        "menu": "Menu",
+        "rollDices": "Lancer les dés",
+        "rollDicesJail": "Lancer les dés et tanter de faire un double pour sortir de prison",
+        "buy": "Acheter {player.space.render} pour M{player.space.price}",
+        "mortgage": "Hypothéquer une propriété",
+        "liftMortgage": "Lever l'hypothèque d'une propriété",
+        "payJail": "Payer M50 pour sortir de prison",
+        "finish": "Terminer le tour",
+
+        "mortgageMenu": "Menu d'hypothèque",
+        "liftMortgageMenu": "Menu de levage d'hypothèque",
+        "mortgageProp": "Hypothéquer {space.render} pour M{space.mortgagePrice} (vous devrez payer M{space.liftMortgagePrice} pour lever l'hypothèque)",
+        "liftMortgageProp": "Lever l'hypothèque de {space.render} pour M{space.liftMortgagePrice}"
+    },
+
+    "notImplemented": "Fonctionnalitée pas encore implémentée",
+    "cancel": "Annuler"
 }

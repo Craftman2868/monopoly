@@ -1,9 +1,13 @@
-from .space import Space_Go, Space_Taxe, Space_Terrain, Space_Railroad, Space_Company, Space_Chance, Space_CommunityChest, Space_TEMP
+from .space import Space, Space_Go, Space_Jail, Space_FreeParking, Space_GoJail, Space_Taxe, Space_Terrain, Space_Railroad, Space_Company, Space_Chance, Space_CommunityChest
 # from .monopoly import Monopoly
 
 import json
 
 from typing import Dict, Any
+
+DEFAULT_MAP = "USA"
+
+MAP_LIST = ["France", "USA"]
 
 
 with open("monopoly/assets/map/map", "r") as f:
@@ -15,6 +19,15 @@ def loadSpace(map: "Map", s: str, pos: int):  # sourcery skip: avoid-builtin-sha
 
     if type == "go":
         return Space_Go(map, pos)
+
+    if type == "jail":
+        return Space_Jail(map, pos)
+
+    if type == "free_parking":
+        return Space_FreeParking(map, pos)
+
+    if type == "go_jail":
+        return Space_GoJail(map, pos)
 
     if type == "taxe":
         if not args:
@@ -61,11 +74,8 @@ def loadSpace(map: "Map", s: str, pos: int):  # sourcery skip: avoid-builtin-sha
 
     if type == "community_chest":
         return Space_CommunityChest(map, pos)
-    
-    # NOT IMPLEMENTED YET:
-    return Space_TEMP(map, pos)
 
-    # raise ValueError(f"'{type}' space type not found !")
+    raise ValueError(f"'{type}' space type not found !")
 
 
 def loadSpaces(map: "Map"):

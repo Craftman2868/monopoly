@@ -1,4 +1,5 @@
 # from .monopoly import monopoly
+from .space import TERRAIN_COUNT_BY_GROUPS
 
 from typing import Optional
 
@@ -19,6 +20,11 @@ class Player:
 
         self.rentMultiplier = 1
 
+        self.inJail = False
+        self.jailTurnCount = 0
+
+        self.cards = []
+
     @property
     def renderer(self):
         return self.game.renderer
@@ -32,6 +38,16 @@ class Player:
 
     def countHotels(self):
         return sum(s.hotelCount for s in self.ownedSpaces if s.type == "terrain")
+    
+    def hasGroup(self, gid: int):
+        if gid < 0 or gid >= len(TERRAIN_COUNT_BY_GROUPS):
+            return False
+
+        terrainCount = sum(s.type == "terrain" and s.group_id == gid for s in self.ownedSpaces)
+
+        assert terrainCount <= TERRAIN_COUNT_BY_GROUPS[gid]
+
+        return terrainCount == TERRAIN_COUNT_BY_GROUPS[gid]
 
     def multiplyRent(self, multiplier: int):
         self.rentMultiplier = multiplier
@@ -46,6 +62,8 @@ class Player:
         self.renderer.renderPlayer(self, score, double)
     
     def play(self, score: int, double: bool):
+        do_render = False
+
         self.advance(score)
 
         self.render(score, double)
@@ -56,8 +74,8 @@ class Player:
             space = self.space
 
             if self.do_space(score):
-                self.render()
-            
+                do_render = True
+
         self.rentMultiplier = 1
 
         if self.money < 0:
@@ -65,10 +83,10 @@ class Player:
 
             raise NotImplementedError("Player dead")
         
-        print("\r\n")
+        return do_render
 
     def receiveSalary(self):
-        self.renderer.playerReceiveSalary(self)
+        self.renderer.playerMessage(self, "salary")
 
         self.give(200)
 
@@ -130,11 +148,30 @@ class Player:
 
         ## TODO: check enough money
 
+        if self.money < 0:
+            self.dead = True
+
+            raise NotImplementedError("Player dead")
+
         if to:
             to.give(amount)
-        
+    
+    def giveCard(self, card: str):
+        self.cards.append(card)
+
+    def menu(self, canRollDices: bool = True, do_render: bool = True, has_played: bool = True):
+        return self.renderer.playerMenu(self, canRollDices, do_render, has_played)
+
     def goJail(self):
-        pass  ## TODO
+        self.inJail = True
+
+        self.pos = 10  # JAIL
+    
+    def getOutJail(self, score: int, double: int):
+        self.inJail = False
+        self.jailTurnCount = 0
+
+        return self.play(score, double)
 
     def __repr__(self):
         return self.game.lang["player"].format(id = self.id + 1)

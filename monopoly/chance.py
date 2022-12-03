@@ -7,7 +7,7 @@ CHANCE_CARDS = [
     lambda player: (player.multiplyRent(2), player.gotoNearest("railroad")),
     lambda player: (player.multiplyRent(10), player.gotoNearest("company")),
     lambda player: player.give(50),
-    lambda player: None,  ## Get out jail
+    lambda player: player.giveCard("get_out_jail"),
     lambda player: player.moveBack(3),
     lambda player: player.goJail(),
     lambda player: player.pay(25 * player.countHouses() + 100 * player.countHotels()),
@@ -22,7 +22,7 @@ COMMUNITY_CHEST_CARDS = [
     lambda player: player.give(200),
     lambda player: player.pay(50),
     lambda player: player.give(50),
-    lambda player: None,  ## Get out jail
+    lambda player: player.giveCard("get_out_jail"),
     lambda player: player.goJail(),
     lambda player: player.give(100),
     lambda player: player.give(20),

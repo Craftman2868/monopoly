@@ -27,7 +27,11 @@ class Dice:
 
         self.rolling = True
     
-        self.value = self.min + (self.value + randint(0, int((self.max - self.min) / 4))) % (self.max - self.min)
+        self.value += randint(0, self.max)
+
+        self.value %= self.max - self.min
+
+        self.value += self.min
 
         return self
         

@@ -1,0 +1,64 @@
+{
+    "name": "USA",
+    "terrain": [
+        [
+            "Mediteranean avenue",
+            "Baltic avenue"
+        ],
+        [
+            "Oriental avenue",
+            "Vermont avenue",
+            "Connecticut avenue"
+        ],
+        [
+            "St-Charles avenue",
+            "States avenue",
+            "Virginia avenue"
+        ],
+        [
+            "St-James place",
+            "Tennessee avenue",
+            "New-York avenue"
+        ],
+        [
+            "Kentuky avenue",
+            "Indiana avenue",
+            "Illinois avenue"
+        ],
+        [
+            "Atlantic avenue",
+            "Ventnor avenue",
+            "Marvin gardens"
+        ],
+        [
+            "Pacific avenue",
+            "North Carolina avenue",
+            "Pennsylvania avenue"
+        ],
+        [
+            "Parc place",
+            "Boardwalk"
+        ]
+    ],
+    "railroad": [
+        "Reading Railroad",
+        "Pennsylvania Railroad",
+        "B. & O. Railroad",
+        "Short line"
+    ],
+    "company": [
+        "Electric company",
+        "Water works"
+    ],
+    "taxe": [
+        "Income tax",
+        "Luxury tax"
+    ],
+
+    "go": "Go",
+    "jail": "Jail",
+    "free_parking": "Free parking",
+    "go_jail": "Go to jail",
+    "chance": "Chance",
+    "community_chest": "Community Chest"
+}

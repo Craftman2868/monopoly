@@ -18,42 +18,41 @@
         [
             "St-James place",
             "Tennessee avenue",
-            "New-York avenue",
-            "#### TODO"
+            "New-York avenue"
         ],
         [
-            "Avenue Matignon",
-            "Boulevard Malherbes",
-            "Avenue Henri-Martin"
+            "Kentuky avenue",
+            "Indiana avenue",
+            "Illinois avenue"
         ],
         [
-            "Faubourg Saint-Honoré",
-            "Place de la Bourse",
-            "Rue La Fayette"
+            "Atlantic avenue",
+            "Ventnor avenue",
+            "Marvin gardens"
         ],
         [
-            "Avenue de Breteuil",
-            "Avenue Foch",
-            "Boulevard des Capucines"
+            "Pacific avenue",
+            "North Carolina avenue",
+            "Pennsylvania avenue"
         ],
         [
-            "Avenue des Champs-Elysées",
-            "Rue de la Paix"
+            "Parc place",
+            "Boardwalk"
         ]
     ],
     "railroad": [
-        "Gare Montparnasse",
-        "Gare de Lyon",
-        "Gare du Nord",
-        "Gare Saint-Lazare"
+        "Reading Railroad",
+        "Pennsylvania Railroad",
+        "B. & O. Railroad",
+        "Short line"
     ],
     "company": [
         "Electric company",
-        "Compagnie de distribution des eaux"
+        "Water works"
     ],
     "taxe": [
-        "Impôts sur le revenu",
-        "Luxury taxe"
+        "Income tax",
+        "Luxury tax"
     ],
 
     "go": "Go",

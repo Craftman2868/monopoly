@@ -1,7 +1,9 @@
 import json
 
 
-DEFAULT = "english"
+DEFAULT_LANG = "english"
+
+LANG_LIST = ["french", "english"]
 
 
 def _loadLang(name: str):  # sourcery skip: raise-from-previous-error
@@ -12,7 +14,7 @@ def _loadLang(name: str):  # sourcery skip: raise-from-previous-error
         raise FileNotFoundError(f"Map file '{name}' not found")
 
 def loadLang(name: str):
-    defaultLang = _loadLang(DEFAULT)
+    defaultLang = _loadLang(DEFAULT_LANG)
 
     lang = _loadLang(name)
 

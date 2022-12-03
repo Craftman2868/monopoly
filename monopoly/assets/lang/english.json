@@ -35,11 +35,11 @@
         "... payer M10 ## TODO",
         "... payer M100 ## TODO"
     ],
-    "askBuy": "Do you want to buy {name} for M{price}?",
+    "askBuy": "Do you want to buy {space.render} for M{space.price}?",
     "pressForRollDices": "Press any key to roll dices...",
     "player": "Player {id}",
-    "buyRent": "You arrived on {space}, you have to pay M{price} of rent to {owner}",
-    "buyTaxe": "You arrived on {space}, you have to pay M{price} of taxe",
+    "buyRent": "You arrived on {space.render}, you have to pay M{rent} of rent to {space.owner}",
+    "buyTaxe": "You arrived on {space.render}, you have to pay M{space.amount} of taxe",
     "salary": "Congratulation! You receive M200 of salary",
     "playAgain": "You got a double, you must play again",
     "space": "Space",
@@ -47,5 +47,30 @@
     "score": "Score",
     "playerHasToDrawChanceCard": "You arrived on Chance space, you have to draw a Chance card",
     "playerHasToDrawCommunityChestCard": "You arrived on Community Chest space, you have to draw a Community Chest card",
-    "playerDrawnCard": "You drawn the card '{card}'"
+    "playerDrawnCard": "You drawn the card '{card}'",
+    "playerInJail": "You are in jail !",
+    "visitOnly": "Visit only",
+    "playerGoJailDouble": "You made 3 doubles in a row, go to jail!",
+    "maxJailTurn": "You tried 3 times to get a double to get out of jail, you have to pay M50 to get out",
+    "playerMortgageProp": "You mortgaged {space.render} for M{space.mortgagePrice}",
+    "playerLiftMortgageProp": "You lifted {space.render}'s mortgage for M{space.liftMortgagePrice}",
+
+    "menu": {
+        "menu": "Menu",
+        "rollDices": "Roll dices",
+        "rollDicesJail": "Roll dices and try to make a double for get out jail",
+        "buy": "Buy {player.space.render} for M{player.space.price}",
+        "mortgage": "Mortgage a property",
+        "liftMortgage": "Lift a property mortgage",
+        "payJail": "Pay M50 for get out jail",
+        "finish": "Finish turn",
+
+        "mortgageMenu": "Mortgage menu",
+        "liftMortgageMenu": "Mortgage lifting menu",
+        "mortgageProp": "Mortgage {space.render} for M{space.mortgagePrice} (you will need to pay M{space.liftMortgagePrice} to lift the mortgage)",
+        "liftMortgageProp": "Lift the mortgage of {space.render} for M{space.liftMortgagePrice}"
+    },
+
+    "notImplemented": "Feature not yet implemented",
+    "cancel": "Cancel"
 }
