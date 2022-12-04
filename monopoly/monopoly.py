@@ -92,6 +92,7 @@ class Monopoly:
                 assert isinstance(space, OwnableSpace)
 
                 player.menuLiftMortgage(space)
+
             if action == "rollDices":
                 assert not player.inJail
 
@@ -113,6 +114,7 @@ class Monopoly:
                     self.renderer.playerPlayAgain(player)
 
                 has_played = True
+
             elif action == "rollDicesJail":
                 assert player.inJail
 
@@ -139,6 +141,7 @@ class Monopoly:
 
                 play_again = False
                 has_played = True
+
             elif action == "payJail":
                 assert player.inJail
 

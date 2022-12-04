@@ -19,7 +19,7 @@ else:
         old = termios.tcgetattr(fd)
         try:
             tty.setraw(fd)
-            return stdin.read(1)
+            return stdin.read(1).encode()
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
