@@ -110,7 +110,10 @@ class Monopoly:
 
                     player.goJail()
 
-                if not player.inJail and play_again:
+                if player.inJail:
+                    play_again = False
+
+                if play_again:
                     self.renderer.playerPlayAgain(player)
 
                 has_played = True

@@ -40,14 +40,14 @@ rgb_to_code = lambda r, g, b: f"{CSI}38;2;{r};{g};{b}m"
 
 
 COLOR_TO_CODE = {
-    "brown":        rgb_to_code(167, 103, 48 ),
-    "light_blue":   rgb_to_code(170, 204, 255),
-    "pink":         rgb_to_code(238, 68,  221),
-    "orange":       rgb_to_code(255, 102, 0  ),
-    "red":          rgb_to_code(255, 0,   0  ),
-    "yellow":       rgb_to_code(255, 255, 0  ),
-    "green":        rgb_to_code(0,   200, 0  ),
-    "blue":         rgb_to_code(51,  51,  255),
+    "brown":        BOLD + rgb_to_code(167, 103, 48 ),
+    "light_blue":   BOLD + rgb_to_code(120, 200, 245),
+    "pink":         BOLD + rgb_to_code(238, 68,  221),
+    "orange":       BOLD + rgb_to_code(255, 102, 0  ),
+    "red":          BOLD + rgb_to_code(255, 0,   0  ),
+    "yellow":       BOLD + rgb_to_code(255, 255, 0  ),
+    "green":        BOLD + rgb_to_code(0,   200, 0  ),
+    "blue":         BOLD + rgb_to_code(51,  51,  255),
 
     "native_yellow":  CSI + "33m",
     "bright_white": CSI + "97m",
