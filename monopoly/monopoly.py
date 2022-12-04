@@ -1,15 +1,21 @@
-from .player    import Player
+from .player    import Player, DebugPlayer
 from .dice      import DicePair
 from .renderer  import Renderer
 from .map       import Map
-from .space     import OwnableSpace
+from .space     import OwnableSpace, Space_Terrain
 from .lang      import loadLang
 from .chance    import CHANCE_CARDS, COMMUNITY_CHEST_CARDS
 from .cardStack import CardStack
 
+from typing import Optional
+
 
 class Monopoly:
-    def __init__(self, *, playerCount: int = 4, lang: str = "english", map: str = "USA"):
+    def __init__(self, *, playerCount: int = 4, lang: str = "english", map: str = "USA", debug: bool = False):
+        self.debug = debug
+
+        self.debugPlayer: Optional[Player] = None
+
         self.playerCount = playerCount
 
         self.lang = loadLang(lang)
@@ -29,6 +35,9 @@ class Monopoly:
 
         self.chanceCardStack.mix()
         self.communityChestCardStack.mix()
+
+        if self.debug:
+            self.debugPlayer = DebugPlayer(self)
     
     def drawChanceCard(self):
         return self.chanceCardStack.draw()
@@ -64,47 +73,25 @@ class Monopoly:
 
             do_render = True
 
-            assert action in ("mortgage", "liftMortgage", "buy", "rollDices", "rollDicesJail", "payJail", "jailCard", "finish")
+            assert action in ("mortgage", "liftMortgage", "buy", "rollDices", "rollDicesJail", "payJail", "jailCard", "finish", "pass", "buyHousesOrHotels", "saleHousesOrHotels")
 
             if action == "mortgage":
                 assert len(args) == 1
 
                 space = args[0]
 
-                if space == "cancel":
-                    continue
-
                 assert isinstance(space, OwnableSpace)
 
-                assert space.mortgage == False
-
-                space.mortgage = True
-
-                self.renderer.playerMessage(player, "playerMortgageProp", space = space)
-
-                player.give(space.mortgagePrice)
-
-                # self.renderer.playerMessage(player, "notImplemented")  ## TODO
+                player.menuMortgage(space)
 
             if action == "liftMortgage":
                 assert len(args) == 1
 
                 space = args[0]
 
-                if space == "cancel":
-                    continue
-
                 assert isinstance(space, OwnableSpace)
 
-                assert space.mortgage == True
-
-                space.mortgage = False
-
-                self.renderer.playerMessage(player, "playerLiftMortgageProp", space = space)
-
-                player.pay(space.liftMortgagePrice)
-
-                # self.renderer.playerMessage(player, "notImplemented")  ## TODO
+                player.menuLiftMortgage(space)
             if action == "rollDices":
                 assert not player.inJail
 
@@ -128,9 +115,9 @@ class Monopoly:
                 has_played = True
             elif action == "rollDicesJail":
                 assert player.inJail
-                
+
                 if player.jailTurnCount >= 3:
-                    self.renderer.playerMessage(player, "maxJailTurn")
+                    self.renderer.playerMessage(player, "JailTurn")
 
                     player.pay(50)
 
@@ -165,7 +152,7 @@ class Monopoly:
                     double_count += 1
 
                 play_again = double
-            
+
             elif action == "jail_card":
                 assert player.inJail
 
@@ -177,14 +164,40 @@ class Monopoly:
                     double_count += 1
 
                 play_again = double
-            
+
             elif action == "buy":
-                if player.ask(self.lang["askBuy"].format(space = player.space)):
+                if player.ask(self.lang("askBuy", space = player.space)):
                     player.pay(player.space.price)
 
-                    player.ownedSpaces.add(player.space)
+                    player.ownedSpaces.append(player.space)
+
+                    player.ownedSpaces.sort(key = lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
 
                     player.space.owner: Player = player
+
+            elif action == "buyHousesOrHotels":
+                assert len(args) == 2
+
+                space, hotel = args[0], args[1]
+
+                assert isinstance(space, Space_Terrain)
+                assert isinstance(hotel, bool)
+
+                success = space.buyHotel() if hotel else space.buyHouse()
+
+                if success:
+                    if hotel:
+                        self.renderer.playerMessage(player, "buyHotelSuccess", space = space)
+                    else:
+                        self.renderer.playerMessage(player, "buyHouseSuccess", space = space)
+                else:
+                    if hotel:
+                        self.renderer.playerMessage(player, "buyHotelFail", space = space)
+                    else:
+                        self.renderer.playerMessage(player, "buyHouseFail", space = space)
+
+            elif action == "saleHousesOrHotels":
+                self.renderer.playerMessage(player, "notImplemented")
 
             elif action == "finish":
                 break

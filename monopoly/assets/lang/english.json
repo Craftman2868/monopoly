@@ -1,4 +1,5 @@
 {
+    "nameOf": "Name of {player}",
     "chanceCards": [
         "Rendez-vous à la Rue de la Paix ## TODO",
         "Avancer jusqu’à la case départ ## TODO",
@@ -54,6 +55,7 @@
     "maxJailTurn": "You tried 3 times to get a double to get out of jail, you have to pay M50 to get out",
     "playerMortgageProp": "You mortgaged {space.render} for M{space.mortgagePrice}",
     "playerLiftMortgageProp": "You lifted {space.render}'s mortgage for M{space.liftMortgagePrice}",
+    "goJail": "You arrived on the 'Go to jail' space, go to jail",
 
     "menu": {
         "menu": "Menu",
@@ -68,9 +70,32 @@
         "mortgageMenu": "Mortgage menu",
         "liftMortgageMenu": "Mortgage lifting menu",
         "mortgageProp": "Mortgage {space.render} for M{space.mortgagePrice} (you will need to pay M{space.liftMortgagePrice} to lift the mortgage)",
-        "liftMortgageProp": "Lift the mortgage of {space.render} for M{space.liftMortgagePrice}"
+        "liftMortgageProp": "Lift the mortgage of {space.render} for M{space.liftMortgagePrice}",
+        "buyHousesOrHotels": "Buy houses or hotels",
+        "saleHousesOrHotels": "Sale houses or hotels"
     },
 
     "notImplemented": "Feature not yet implemented",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+
+    "colors": {
+        "brown": "Brown",
+        "light_blue": "Light blue",
+        "pink": "Pink",
+        "orange": "Orange",
+        "red": "Red",
+        "yellow": "Yellow",
+        "green": "Green",
+        "blue": "Blue"
+    },
+    
+    "group": "{color} group",
+    "specialProperty": "Special property",
+    "groupWhereBuildHouseOrHotel": "Group where build house or hotel",
+    "terrainWhereBuildHouseOrHotel": "Terrain where build house or hotel",
+    "whatDoYouWantToBuild": "What do you want to build?",
+    "house": "House",
+    "hotel": "Hotel",
+    "previous": "Previous",
+    "next": "Next"
 }

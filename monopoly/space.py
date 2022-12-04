@@ -15,6 +15,9 @@ RAILROAD_RENTS = [25, 50, 100, 200]
 MAX_HOTEL_COUNT = 1
 MAX_HOUSE_COUNT = 4
 
+RAILROAD_COUNT = len(RAILROAD_RENTS)
+COMPANY_COUNT = 2
+
 
 terrain_data = {}
 
@@ -54,6 +57,9 @@ class Space:
     
     def __str__(self):
         return self.name
+    
+    def __repr__(self):
+        return f"<{self.__module__}.{self.__class__.__name__} {self!s}>"
 
 
 class Space_Go(Space):
@@ -82,6 +88,8 @@ class Space_GoJail(Space):
         super().__init__(map, "go_jail", pos)
 
     def on_pass(self, player: "Player", score: Optional[int] = None):
+        self.renderer.playerMessage(player, "goJail")
+
         player.goJail()
 
         return True
@@ -150,10 +158,10 @@ class OwnableSpace(Space):
             if self.price == NotImplemented:
                 raise NotImplementedError("Price not implemented")
 
-            # if player.ask(self.game.lang["askBuy"].format(name = self.name, price = self.price)):
+            # if player.ask(self.game.lang("askBuy", name = self.name, price = self.price)):
             #     player.pay(self.price)
 
-            #     player.ownedSpaces.add(self)
+            #     player.ownedSpaces.append(self)
 
             #     self.owner: "Player" = player
 
@@ -180,7 +188,7 @@ class Space_Terrain(OwnableSpace):
         self.houseCount: int = 0
         
         self.hotelCount: int = 0
-    
+
     @property
     def housePrice(self):
         return int(self.data[8])

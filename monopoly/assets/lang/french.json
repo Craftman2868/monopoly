@@ -1,4 +1,5 @@
 {
+    "nameOf": "Nom du {player}",
     "chanceCards": [
         "Rendez-vous à la Rue de la Paix",
         "Avancer jusqu’à la case départ",
@@ -54,6 +55,7 @@
     "maxJailTurn": "Vous avez tenter 3 fois de faire un double pour sortir de prison, vous devez payer M50 pour sortir",
     "playerMortgageProp": "Vous avez hypothéquer {space.render} pour M{space.mortgagePrice}",
     "playerLiftMortgageProp": "Vous avez lever l'hypothèque de {space.render} pour M{space.liftMortgagePrice}",
+    "goJail": "Vous êtes arrivé sur la case 'Allez en prison', allez directement en prison sans passer par la case départ",
 
     "menu": {
         "menu": "Menu",
@@ -68,9 +70,32 @@
         "mortgageMenu": "Menu d'hypothèque",
         "liftMortgageMenu": "Menu de levage d'hypothèque",
         "mortgageProp": "Hypothéquer {space.render} pour M{space.mortgagePrice} (vous devrez payer M{space.liftMortgagePrice} pour lever l'hypothèque)",
-        "liftMortgageProp": "Lever l'hypothèque de {space.render} pour M{space.liftMortgagePrice}"
+        "liftMortgageProp": "Lever l'hypothèque de {space.render} pour M{space.liftMortgagePrice}",
+        "buyHousesOrHotels": "Acheter des maisons ou des hôtels",
+        "saleHousesOrHotels": "Vendre des maisons ou des hôtels"
     },
 
     "notImplemented": "Fonctionnalitée pas encore implémentée",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+
+    "colors": {
+        "brown": "Marron",
+        "light_blue": "Bleu clair",
+        "pink": "Rose",
+        "orange": "Orange",
+        "red": "Rouge",
+        "yellow": "Jaune",
+        "green": "Vert",
+        "blue": "Bleu"
+    },
+    
+    "group": "Groupe {color}",
+    "specialProperty": "Propriété spéciale",
+    "groupWhereBuildHouseOrHotel": "Groupe où construire une maison ou un hôtel",
+    "terrainWhereBuildHouseOrHotel": "Terrain où construire une maison ou un hôtel",
+    "whatDoYouWantToBuild": "Que voulez-vous construire ?",
+    "house": "Maison",
+    "hotel": "Hôtel",
+    "previous": "Précédent",
+    "next": "Suivant"
 }

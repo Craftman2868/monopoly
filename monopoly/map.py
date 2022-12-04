@@ -1,4 +1,12 @@
-from .space import Space, Space_Go, Space_Jail, Space_FreeParking, Space_GoJail, Space_Taxe, Space_Terrain, Space_Railroad, Space_Company, Space_Chance, Space_CommunityChest
+from .space import (
+    Space,
+    Space_Go, Space_Jail, Space_FreeParking, Space_GoJail,
+    Space_Taxe,
+    Space_Terrain, Space_Railroad, Space_Company,
+    Space_Chance, Space_CommunityChest,
+
+    TERRAIN_COUNT_BY_GROUPS, RAILROAD_COUNT, COMPANY_COUNT
+)
 # from .monopoly import Monopoly
 
 import json
@@ -94,21 +102,45 @@ class Map:
     
     def getSpace(self, pos: int):
         return self.spaces[pos % 39]
+
+    def getGroupColor(self, gid: int):
+        return self._getTerrain(gid, 0).color
     
-    def getTerrain(self, gid: int, id: int):
+    def getGroupTerrains(self, gid: int):
+        return [*(self._getTerrain(gid, id) for id in range(TERRAIN_COUNT_BY_GROUPS[gid]))]
+
+    def _getTerrain(self, gid: int, id: int):
         for s in self.spaces:
-            if isinstance(s, Space_Terrain) and s.group_id + 1 == gid and s.id + 1 == id:
+            if isinstance(s, Space_Terrain) and s.group_id == gid and s.id == id:
+                return s
+
+    def getTerrain(self, gid: int, id: int):
+        return self._getTerrain(gid - 1, id - 1)
+
+    def _getRailroad(self, id: int):
+        for s in self.spaces:
+            if isinstance(s, Space_Railroad) and s.id == id:
                 return s
 
     def getRailroad(self, id: int):
+        return self._getRailroad(id - 1)
+
+    def _getCompany(self, id: int):
         for s in self.spaces:
-            if isinstance(s, Space_Railroad) and s.id + 1 == id:
+            if isinstance(s, Space_Company) and s.id == id:
                 return s
 
     def getCompany(self, id: int):
-        for s in self.spaces:
-            if isinstance(s, Space_Company) and s.id + 1 == id:
-                return s
+        return self._getCompany(id - 1)
+    
+    def getRailroads(self):
+        return [*(self._getRailroad(r) for r in range(RAILROAD_COUNT))]
+    
+    def getCompanies(self):
+        return [*(self._getCompany(c) for c in range(COMPANY_COUNT))]
+    
+    def getSpecialProperties(self):
+        return self.getRailroads() + self.getCompanies()
 
     @classmethod
     def load(cls, game: "Monopoly", name: str):  # sourcery skip: raise-from-previous-error

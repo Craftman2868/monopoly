@@ -4,7 +4,7 @@ from .dice      import DicePair
 from .player    import Player
 from .space     import Space, OwnableSpace
 
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Any
 
 
 if platform == "win32":
@@ -58,6 +58,12 @@ RESET = CSI + "0m"
 COLOR_TERRAINS = True
 
 
+def divide_chunks(l: list, n: int):
+    # https://www.geeksforgeeks.org/break-list-chunks-size-n-python/
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
 class DiceRenderer:
     def __init__(self, renderer: "Renderer", dices: DicePair, player: Player):
         self.renderer = renderer
@@ -104,6 +110,10 @@ class Renderer:
         self.sOut = sOut
         self.sErr = stderr
     
+    @property
+    def map(self):
+        return self.game.map
+
     # -------- IO --------
     
     # OUT
@@ -225,11 +235,16 @@ class Renderer:
             return COLOR_TO_CODE[space.color] + str(space) + RESET
 
         return str(space)
+    
+    def renderGroup(self, gid: int):
+        color = self.map.getGroupColor(gid)
+
+        return COLOR_TO_CODE[color] + self.lang("group", color = self.lang["colors"][color]) + RESET
 
     # Messages
     
     def playerMessage(self, _player: Player, _message: str, **kwargs):
-        self.writeLnFlushPlayer(_player, self.lang[_message].format(**kwargs))
+        self.writeLnFlushPlayer(_player, self.lang(_message, **kwargs))
     
     def playerPlayAgain(self, player: Player):
         self.writeLn("--------------------------------------\n")
@@ -313,24 +328,218 @@ class Renderer:
     
     # Menu
 
-    def renderMenu(self, player: Player, title: str, items: List[Tuple[str, str]]):
-        self.writeLnFlush(f"{title} :")
+    @property
+    def cancel_opt(self):
+        return ("cancel", self.lang["cancel"])
 
-        for i, (id, text) in enumerate(items):
-            self.writeLnFlush(f"    {i + 1}.\t{text}")
+    def renderMenu(self, player: Player, title: str, items: List[Tuple[Any, str]], zero: Optional[Tuple[str, str]] = None):
+        # sourcery skip: assign-if-exp, avoid-builtin-shadow
 
-        self.writeLnFlush()
+        if len(items) < 10:
+            pages = [items]
+        else:
+            pages = [*divide_chunks(items, 7)]
 
-        assert len(items) < 10  ## TODO (not supported yet)
+        curPage = 0
 
-        opt = self.askNumber(f"{player!r}:", 1, len(items))
+        while True:
+            self.writeLn()
+            self.writeLn(f"{title} (page {curPage + 1}/{len(pages)}):")
+            if zero:
+                self.writeLn(f"    0.\t{zero[1]}")
 
-        opt = items[opt - 1][0]
+            page: List[Tuple[Any, str]] = pages[curPage].copy()
+            
+            pageSize = len(page)
 
-        return opt
+            if len(pages) > 1:
+                page.insert(0, ("_previous", self.lang["previous"]))
+                page.append(("_next", self.lang["next"]))
+                
+                pageSize += 2
+
+            for i, (id, text) in enumerate(page):
+                self.writeLn(f"    {i + 1}.\t{text}")
+
+            self.writeLnFlush()
+
+            min = 0 if zero else 1
+
+            opt = self.askNumber(f"{player!r}:", min, pageSize)
+
+            if opt == 0:
+                return zero[0]
+
+            opt = page[opt - 1][0]
+
+            if opt == "_previous":
+                curPage -= 1
+            elif opt == "_next":
+                curPage += 1
+            else:
+                return opt
+            
+            curPage %= len(pages)
+    
+    def selectPlayerMenu(self, player: Player, title: str):
+        # sourcery skip: assign-if-exp, introduce-default-else
+        items = [*((p, str(p)) for p in self.game.players)]
+
+        zero = None
+
+        if self.game.debug:
+            zero = (self.game.debugPlayer, str(self.game.debugPlayer))
+
+        return self.renderMenu(player, title, items, zero)
+
+    def debugMenu(self):  # sourcery skip: low-code-quality, merge-list-extend
+        debugMenuItems = [
+            "give",
+            "steal",
+            "manageProperties",
+            "teleportPlayer"
+        ]
+
+        debugMenuItems = [*map(lambda it: (it, it), debugMenuItems)]
+
+        zero = ("cancel", self.lang["cancel"])
+
+        while True:
+            opt = self.renderMenu(self.game.debugPlayer, ITALIC + "Debug Menu" + RESET, debugMenuItems, zero)
+
+            if opt == "cancel":
+                break
+            elif opt == "give":
+                pl = self.selectPlayerMenu(self.game.debugPlayer, "Give to")
+
+                amount = input("Amount: M").strip()
+
+                try:
+                    amount = int(amount)
+                except ValueError:
+                    self.writeLnFlush("Error during conversion to int")
+                    continue
+
+                pl.give(amount)
+
+                pl.render()
+            elif opt == "steal":
+                pl = self.selectPlayerMenu(self.game.debugPlayer, "Steal to")
+
+                amount = input("Amount: M").strip()
+
+                try:
+                    amount = int(amount)
+                except ValueError:
+                    self.writeLnFlush("Error during conversion to int")
+                    continue
+
+                pl.pay(amount)
+
+                pl.render()
+            elif opt == "manageProperties":
+                items = [*map(lambda g: (g, self.renderGroup(g)), range(8)), ("special", self.lang["specialProperty"])]
+
+                group = self.renderMenu(self.game.debugPlayer, "Group", items, self.cancel_opt)
+
+                if group == "cancel":
+                    continue
+
+                if group == "special":
+                    items = [*map(lambda s: (s, s.render), (self.map.getSpecialProperties()))]
+
+                    items.extend([(self.map.getRailroads(), "*railroads"), (self.map.getCompanies(), "*companies")])
+
+                    spaces = self.renderMenu(self.game.debugPlayer, "Space", items, self.cancel_opt)
+                else:
+                    items = [*map(lambda s: (s, s.render), self.map.getGroupTerrains(group))]
+
+                    items.append((self.map.getGroupTerrains(group), "*"))
+
+                    spaces = self.renderMenu(self.game.debugPlayer, "Terrain", items, self.cancel_opt)
+
+                if spaces == "cancel":
+                    continue
+            
+                if not isinstance(spaces, list):
+                    spaces = [spaces]
+
+                items = [
+                    "setOwner"
+                ]
+
+                if any(s.owner for s in spaces):
+                    items.append("toggleMortgage")
+
+                if spaces[0].type == "terrain":
+                    items.extend((
+                        "buildHouse",
+                        "removeHouse",
+                        "buildHotel",
+                        "removeHotel"
+                    ))
+
+                items = [*map(lambda it: (it, it), items)]
+
+                action = self.renderMenu(self.game.debugPlayer, "Action", items, self.cancel_opt)
+
+                if action == "cancel":
+                    continue
+
+                if action == "setOwner":
+                    newOwner = self.selectPlayerMenu(self.game.debugPlayer, "New owner")
+
+                    for space in spaces:
+                        newOwner.giveSpace(space)
+
+                elif action == "toggleMortgage":
+                    for space in spaces:
+                        if space.owner:
+                            space.mortgage = not space.mortgage
+
+                elif action == "buildHouse":
+                    for space in spaces:
+                        assert space.type == "terrain"
+
+                        space.houseCount += 1
+
+                elif action == "removeHouse":
+                    for space in spaces:
+                        assert space.type == "terrain"
+
+                        space.houseCount -= 1
+
+                elif action == "buildHotel":
+                    for space in spaces:
+                        assert space.type == "terrain"
+
+                        space.hotelCount += 1
+
+                elif action == "removeHotel":
+                    for space in spaces:
+                        assert space.type == "terrain"
+
+                        space.hotelCount -= 1
+            elif opt == "teleportPlayer":
+                player = self.selectPlayerMenu(self.game.debugPlayer, "Player")
+
+                pos = input("Pos: ").strip()
+
+                try:
+                    pos = int(pos)
+                except ValueError:
+                    self.writeLnFlush("Error during conversion to int")
+                    continue
+
+                pos %= 39
+
+                player.pos = pos
+
+                player.render()
+            else:
+                self.playerMessage(self.game.debugPlayer, "notImplemented")
 
     def playerMenu(self, player: Player, canRollDices: bool, do_render: bool, has_played: bool):
-        # sourcery skip: extract-duplicate-method, merge-repeated-ifs
         items = []
         args = []
 
@@ -342,6 +551,12 @@ class Renderer:
         if has_played and isinstance(player.space, OwnableSpace) and player.space.forSale:
             items.append("buy")
 
+        if player.inJail and not has_played:
+            items.append("payJail")
+
+            if "jail_card" in player.cards:
+                items.append("jailCard")
+
         if len(player.ownedSpaces) != 0:
             if any((not s.mortgage) for s in player.ownedSpaces):
                 items.append("mortgage")
@@ -349,11 +564,11 @@ class Renderer:
             if any(s.mortgage for s in player.ownedSpaces):
                 items.append("liftMortgage")
 
-        if player.inJail and not has_played:
-            items.append("payJail")
+            if player.ownedGroups:
+                items.append("buyHousesOrHotels")
 
-            if "jail_card" in player.cards:
-                items.append("jailCard")
+            if any(s.houseCount + s.hotelCount for s in player.ownedSpaces if s.type == "terrain"):
+                items.append("saleHousesOrHotels")
 
         if do_render:
             self.renderPlayer(player)
@@ -363,25 +578,62 @@ class Renderer:
         if player.inJail:
             self.playerMessage(player, "playerInJail")
 
-        items = [(it, self.lang["menu"][it].format(player=player)) for it in items]
+        items = [(it, self.lang["menu"](it, player=player)) for it in items]
 
-        opt = self.renderMenu(player, self.lang["menu"]["menu"], items)
+        zero = ("debug", ITALIC + "debug menu" + RESET) if self.game.debug else None
+
+        opt = self.renderMenu(player, self.lang["menu"]["menu"], items, zero)
 
         if opt == "mortgage":
             items = [*(s for s in player.ownedSpaces if not s.mortgage)]
 
-            items = [*((sp, self.lang["menu"]["mortgageProp"].format(space=sp)) for sp in items), ("cancel", self.lang["cancel"])]
+            items = [*((sp, self.lang["menu"]("mortgageProp", space=sp)) for sp in items)]
 
-            prop = self.renderMenu(player, self.lang["menu"]["mortgageMenu"], items)
+            prop = self.renderMenu(player, self.lang["menu"]["mortgageMenu"], items, self.cancel_opt)
+
+            if prop == "cancel":
+                return "pass", args
 
             args.append(prop)
+
         elif opt == "liftMortgage":
             items = [*(s for s in player.ownedSpaces if s.mortgage)]
 
-            items = [*((sp, self.lang["menu"]["liftMortgageProp"].format(space=sp)) for sp in items), ("cancel", self.lang["cancel"])]
+            items = [*((sp, self.lang["menu"]("liftMortgageProp", space=sp)) for sp in items)]
 
-            prop = self.renderMenu(player, self.lang["menu"]["liftMortgageMenu"], items)
+            prop = self.renderMenu(player, self.lang["menu"]["liftMortgageMenu"], items, self.cancel_opt)
+
+            if prop == "cancel":
+                return "pass", args
 
             args.append(prop)
+
+        elif opt == "debug":
+            self.debugMenu()
+
+            return "pass", args
+        
+        elif opt == "buyHousesOrHotels":
+            items = [*map(lambda g: (g, self.renderGroup(g)), player.ownedGroups)]
+            group = self.renderMenu(player, self.lang["groupWhereBuildHouseOrHotel"], items, self.cancel_opt)
+
+            if group == "cancel":
+                return "pass", args
+
+            items = [*map(lambda s: (s, s.render), self.map.getGroupTerrains(group))]
+            space = self.renderMenu(player, self.lang["groupWhereBuildHouseOrHotel"], items, self.cancel_opt)
+
+            if space == "cancel":
+                return "pass", args
+
+            args.append(space)
+
+            items = [(False, self.lang["house"]), (True, self.lang["hotel"])]
+            hotel = self.renderMenu(player, self.lang["whatDoYouWantToBuild"], items, self.cancel_opt)
+
+            if hotel == "cancel":
+                return "pass", args
+            
+            args.append(hotel)
 
         return opt, args

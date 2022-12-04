@@ -1,5 +1,5 @@
 from .dice      import Dice, DiceGroup, DicePair
-from .player    import Player
+from .player    import Player, DebugPlayer
 from .map       import Map, MAP_LIST, DEFAULT_MAP
 from .renderer  import Renderer, DiceRenderer
 from .monopoly  import Monopoly

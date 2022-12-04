@@ -1,13 +1,13 @@
 # from .monopoly import monopoly
-from .space import TERRAIN_COUNT_BY_GROUPS
+from .space import TERRAIN_COUNT_BY_GROUPS, Space, OwnableSpace
 
-from typing import Optional
+from typing import Optional, List
 
-MAX_SPACE = 40 - 1
+SPACE_COUNT = 40
 
 
 class Player:
-    def __init__(self, game: "Monopoly", id: int, *, money: int = 1500, pos: int = 0):
+    def __init__(self, game: "Monopoly", id: int, *, name: Optional[str] = None, money: int = 1500, pos: int = 0):
         self.id = id
         self.game = game
         self.money = money
@@ -16,7 +16,7 @@ class Player:
 
         self.map = self.game.map
 
-        self.ownedSpaces = set()
+        self.ownedSpaces: List[Space] = []
 
         self.rentMultiplier = 1
 
@@ -25,6 +25,8 @@ class Player:
 
         self.cards = []
 
+        self.name = name
+
     @property
     def renderer(self):
         return self.game.renderer
@@ -32,6 +34,17 @@ class Player:
     @property
     def space(self):
         return self.game.map.getSpace(self.pos)
+    
+    @property
+    def ownedGroups(self):
+        return [*(gid for gid in range(8) if self.hasGroup(gid))]
+    
+    def giveSpace(self, space: OwnableSpace):
+        assert isinstance(space, OwnableSpace)
+
+        self.ownedSpaces.append(space)
+
+        space.owner = self
     
     def countHouses(self):
         return sum(s.houseCount for s in self.ownedSpaces if s.type == "terrain")
@@ -124,16 +137,16 @@ class Player:
     def advance(self, score: int):  # sourcery skip: class-extract-method
         self.pos += score
 
-        if self.pos > MAX_SPACE or self.pos < 0:
-            self.pos %= MAX_SPACE
+        if self.pos >= SPACE_COUNT or self.pos < 0:
+            self.pos %= SPACE_COUNT
 
             self.receiveSalary()
         
     def moveBack(self, score: int):
         self.pos -= score
 
-        if self.pos > MAX_SPACE or self.pos < 0:
-            self.pos %= MAX_SPACE
+        if self.pos >= SPACE_COUNT or self.pos < 0:
+            self.pos %= SPACE_COUNT
 
             self.receiveSalary()
     
@@ -173,5 +186,40 @@ class Player:
 
         return self.play(score, double)
 
+    def menuMortgage(self, space: Space):
+        assert space.mortgage == False
+
+        space.mortgage = True
+
+        self.renderer.playerMessage(self, "playerMortgageProp", space = space)
+
+        self.give(space.mortgagePrice)
+    
+    def menuLiftMortgage(self, space: Space):
+        assert space.mortgage == True
+
+        space.mortgage = False
+
+        self.renderer.playerMessage(self, "playerLiftMortgageProp", space = space)
+
+        self.give(space.liftMortgagePrice)
+    
+    def buySpace(self):
+        assert isinstance(self.space, OwnableSpace)
+
+        if self.ask(self.lang("askBuy", space = self.space)):
+            self.pay(self.space.price)
+
+            self.ownedSpaces.append(self.space)
+
+            self.ownedSpaces.sort(key = lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
+
+            self.space.owner: Player = self
+
     def __repr__(self):
-        return self.game.lang["player"].format(id = self.id + 1)
+        return self.name or self.game.lang("player", id = self.id + 1)
+
+
+class DebugPlayer(Player):
+    def __init__(self, game: "Monopoly"):
+        super().__init__(game, -1, name="\033[3mDEBUG PLAYER\033[0m")
