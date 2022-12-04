@@ -23,11 +23,11 @@ else:
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
-    def kbhit(self):
+    def kbhit():
         ''' Returns True if keyboard character was hit, False otherwise.
         '''
 
-        dr,dw,de = select([sys.stdin], [], [], 0)
+        dr,dw,de = select([stdin], [], [], 0)
         return dr != []
 
 ESC = "\033"
