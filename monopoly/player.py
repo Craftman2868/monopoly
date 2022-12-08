@@ -1,7 +1,7 @@
 # from .monopoly import monopoly
-from .space import TERRAIN_COUNT_BY_GROUPS, Space, OwnableSpace
+from .space import TERRAIN_COUNT_BY_GROUPS, Space, OwnableSpace, Space_Terrain
 
-from typing import Optional, List
+from typing import Optional, List, Any, Dict
 
 SPACE_COUNT = 40
 
@@ -195,14 +195,14 @@ class Player:
 
         self.give(space.mortgagePrice)
     
-    def menuLiftMortgage(self, space: Space):
+    def menuRemoveMortgage(self, space: Space):
         assert space.mortgage == True
 
         space.mortgage = False
 
-        self.renderer.playerMessage(self, "playerLiftMortgageProp", space = space)
+        self.renderer.playerMessage(self, "playerRemoveMortgageProp", space = space)
 
-        self.give(space.liftMortgagePrice)
+        self.give(space.removeMortgagePrice)
     
     def buySpace(self):
         assert isinstance(self.space, OwnableSpace)
@@ -215,6 +215,139 @@ class Player:
             self.ownedSpaces.sort(key = lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
 
             self.space.owner: Player = self
+    
+    def doAction(self, action: str, args: List[Any], vars: Dict[str, Any]):
+        assert action in {"mortgage", "removeMortgage", "buy", "rollDices", "rollDicesJail", "payJail", "jailCard", "finish", "pass", "buyHousesOrHotels", "saleHousesOrHotels"}
+
+        if action == "buy":
+            if self.ask(self.renderer.lang("askBuy", space = self.space)):
+                self.pay(self.space.price)
+
+                self.ownedSpaces.append(self.space)
+
+                self.ownedSpaces.sort(key = lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
+
+                self.space.owner: Player = self
+
+        elif action == "buyHousesOrHotels":
+            self.menuBuyHousesOrHotels(args)
+        elif action == "saleHousesOrHotels":
+            self.renderer.playerMessage(self, "notImplemented")
+
+        elif action == "jail_card":
+            assert self.inJail
+
+            score, double = self.game.rollDices(self)
+
+            self.getOutJail(score, double)
+
+            if double:
+                vars["double_count"] += 1
+
+            vars["play_again"] = double
+
+        elif action == "mortgage":
+            space = self.menuArgsGetSpace(args, vars)
+            self.menuMortgage(space)
+
+        elif action == "payJail":
+            self.menuPayJail()
+        elif action == "removeMortgage":
+            space = self.menuArgsGetSpace(args, vars)
+            self.menuRemoveMortgage(space)
+
+        elif action == "rollDices":
+            self.menuRollDices(vars)
+        elif action == "rollDicesJail":
+            self.menuRollDicesJail(vars)
+
+        elif action == "finish":
+            return False
+
+        return True
+
+    def menuRollDicesJail(self, vars: Dict[str, Any]):
+        assert self.inJail
+
+        score, double = self.game.rollDices(self)
+
+        if double:
+            self.getOutJail(score, double)
+        else:
+            self.jailTurnCount += 1
+
+        vars["play_again"] = False
+        vars["has_played"] = True
+
+    def menuRollDices(self, vars: Dict[str, Any]):
+        assert not self.inJail
+
+        score, double = self.game.rollDices(self)
+
+        if double:
+            vars["double_count"] += 1
+
+        vars["play_again"] = double
+
+        vars["do_render"] = self.play(score, double)
+
+        if vars["double_count"] == 3:
+            self.renderer.playerMessage(self, "playerGoJailDouble")
+
+            self.goJail()
+
+        if self.inJail:
+            vars["play_again"] = False
+
+        if vars["play_again"]:
+            self.renderer.playerPlayAgain(self)
+
+        vars["has_played"] = True
+
+    def menuPayJail(self, vars: Dict[str, Any]):
+        assert self.inJail
+
+        self.pay(50)
+
+        score, double = self.game.rollDices(self)
+
+        self.getOutJail(score, double)
+
+        if double:
+            vars["double_count"] += 1
+
+        vars["play_again"] = double
+
+    def menuBuyHousesOrHotels(self, args):
+        assert len(args) == 2
+
+        space, hotel = args[0], args[1]
+
+        assert isinstance(space, Space_Terrain)
+        assert isinstance(hotel, bool)
+
+        success = space.buyHotel() if hotel else space.buyHouse()
+
+        if success:
+            if hotel:
+                self.renderer.playerMessage(self, "buyHotelSuccess", space = space)
+            else:
+                self.renderer.playerMessage(self, "buyHouseSuccess", space = space)
+        else:
+            if hotel:
+                self.renderer.playerMessage(self, "buyHotelFail", space = space)
+            else:
+                self.renderer.playerMessage(self, "buyHouseFail", space = space)
+
+    def menuArgsGetSpace(self, args):
+        assert len(args) == 1
+
+        result = args[0]
+
+        assert isinstance(result, OwnableSpace)
+
+        return result
+
 
     def __repr__(self):
         return self.name or self.game.lang("player", id = self.id + 1)

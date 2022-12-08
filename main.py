@@ -8,10 +8,17 @@ DEFAULT_PLAYER_COUNT = 4
 
 """
 TODO:
+    - maisons / hotels (à finir)
     - échange
     - enregistrer partie
-    - maisons / hotels
 """
+
+
+def askPlayerNames(game: Monopoly):
+    for pl in game.players:
+        name = input(game.lang("nameOf", player = pl) + ": ").strip()
+
+        pl.name = name or None
 
 
 def main():
@@ -28,10 +35,7 @@ def main():
     game = Monopoly(playerCount=args.pc, lang=args.lang, map=args.map, debug=args.debug)
 
     if not args.nn:
-        for pl in game.players:
-            name = input(game.lang("nameOf", player = pl) + ": ").strip()
-            
-            pl.name = name or None
+        askPlayerNames(game)
 
     game.run()
 
