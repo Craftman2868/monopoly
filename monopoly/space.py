@@ -136,7 +136,7 @@ class OwnableSpace(Space):
         return int(self.price / 2)
 
     @property
-    def liftMortgagePrice(self):
+    def removeMortgagePrice(self):
         return int(self.mortgagePrice * (110 / 100))
 
     @property

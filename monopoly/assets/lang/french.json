@@ -54,7 +54,7 @@
     "playerGoJailDouble": "Vous avez fait 3 doubles de suite, allez en prison !",
     "maxJailTurn": "Vous avez tenter 3 fois de faire un double pour sortir de prison, vous devez payer M50 pour sortir",
     "playerMortgageProp": "Vous avez hypothéquer {space.render} pour M{space.mortgagePrice}",
-    "playerLiftMortgageProp": "Vous avez lever l'hypothèque de {space.render} pour M{space.liftMortgagePrice}",
+    "playerRemoveMortgageProp": "Vous avez lever l'hypothèque de {space.render} pour M{space.removeMortgagePrice}",
     "goJail": "Vous êtes arrivé sur la case 'Allez en prison', allez directement en prison sans passer par la case départ",
 
     "menu": {
@@ -63,14 +63,14 @@
         "rollDicesJail": "Lancer les dés et tanter de faire un double pour sortir de prison",
         "buy": "Acheter {player.space.render} pour M{player.space.price}",
         "mortgage": "Hypothéquer une propriété",
-        "liftMortgage": "Lever l'hypothèque d'une propriété",
+        "removeMortgage": "Lever l'hypothèque d'une propriété",
         "payJail": "Payer M50 pour sortir de prison",
         "finish": "Terminer le tour",
 
         "mortgageMenu": "Menu d'hypothèque",
-        "liftMortgageMenu": "Menu de levage d'hypothèque",
-        "mortgageProp": "Hypothéquer {space.render} pour M{space.mortgagePrice} (vous devrez payer M{space.liftMortgagePrice} pour lever l'hypothèque)",
-        "liftMortgageProp": "Lever l'hypothèque de {space.render} pour M{space.liftMortgagePrice}",
+        "removeMortgageMenu": "Menu de levage d'hypothèque",
+        "mortgageProp": "Hypothéquer {space.render} pour M{space.mortgagePrice} (vous devrez payer M{space.removeMortgagePrice} pour lever l'hypothèque)",
+        "removeMortgageProp": "Lever l'hypothèque de {space.render} pour M{space.removeMortgagePrice}",
         "buyHousesOrHotels": "Acheter des maisons ou des hôtels",
         "saleHousesOrHotels": "Vendre des maisons ou des hôtels"
     },

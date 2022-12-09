@@ -397,7 +397,8 @@ class Renderer:
             "give",
             "steal",
             "manageProperties",
-            "teleportPlayer"
+            "teleportPlayer",
+            "sendPlayerJail"
         ]
 
         debugMenuItems = [*map(lambda it: (it, it), debugMenuItems)]
@@ -536,6 +537,12 @@ class Renderer:
                 player.pos = pos
 
                 player.render()
+            elif opt == "sendPlayerJail":
+                player = self.selectPlayerMenu(self.game.debugPlayer, "Player")
+
+                player.goJail()
+
+                player.render()
             else:
                 self.playerMessage(self.game.debugPlayer, "notImplemented")
 
@@ -543,8 +550,8 @@ class Renderer:
         items = []
         args = []
 
-        if canRollDices:
-            items.append("rollDicesJail" if player.inJail else "rollDices")
+        if canRollDices and not player.inJail:
+            items.append("rollDices")
         else:
             items.append("finish")
 
@@ -554,6 +561,9 @@ class Renderer:
         if player.inJail and not has_played:
             items.append("payJail")
 
+            if player.jailTurnCount < 3:
+                items.append("rollDicesJail")
+
             if "jail_card" in player.cards:
                 items.append("jailCard")
 
@@ -562,7 +572,7 @@ class Renderer:
                 items.append("mortgage")
 
             if any(s.mortgage for s in player.ownedSpaces):
-                items.append("liftMortgage")
+                items.append("removeMortgage")
 
             if player.ownedGroups:
                 items.append("buyHousesOrHotels")
@@ -576,7 +586,10 @@ class Renderer:
             self.writeLnFlush()
 
         if player.inJail:
-            self.playerMessage(player, "playerInJail")
+            if player.jailTurnCount >= 3:
+                self.renderer.playerMessage(self, "maxJailTurn")
+            else:
+                self.playerMessage(player, "playerInJail")
 
         items = [(it, self.lang["menu"](it, player=player)) for it in items]
 
@@ -596,12 +609,12 @@ class Renderer:
 
             args.append(prop)
 
-        elif opt == "liftMortgage":
+        elif opt == "removeMortgage":
             items = [*(s for s in player.ownedSpaces if s.mortgage)]
 
-            items = [*((sp, self.lang["menu"]("liftMortgageProp", space=sp)) for sp in items)]
+            items = [*((sp, self.lang["menu"]("removeMortgageProp", space=sp)) for sp in items)]
 
-            prop = self.renderMenu(player, self.lang["menu"]["liftMortgageMenu"], items, self.cancel_opt)
+            prop = self.renderMenu(player, self.lang["menu"]["removeMortgageMenu"], items, self.cancel_opt)
 
             if prop == "cancel":
                 return "pass", args

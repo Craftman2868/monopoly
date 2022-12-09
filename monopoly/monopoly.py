@@ -60,153 +60,22 @@ class Monopoly:
         return self.dices.sum, self.dices.double
 
     def turn(self, player: Player):
-        play_again = True
+        vars = {
+            "play_again": True,
+            "double_count": 0,
+            "do_render": True,
+            "has_played": False
+        }
 
-        double_count = 0
+        running = True
 
-        do_render = True
+        while running:
+            action, args = player.menu(vars["play_again"], vars["do_render"], vars["has_played"])
 
-        has_played = False
+            vars["do_render"] = True
 
-        while True:
-            action, args = player.menu(play_again, do_render, has_played)
+            running = player.doAction(action, args, vars)
 
-            do_render = True
-
-            assert action in ("mortgage", "liftMortgage", "buy", "rollDices", "rollDicesJail", "payJail", "jailCard", "finish", "pass", "buyHousesOrHotels", "saleHousesOrHotels")
-
-            if action == "mortgage":
-                assert len(args) == 1
-
-                space = args[0]
-
-                assert isinstance(space, OwnableSpace)
-
-                player.menuMortgage(space)
-
-            if action == "liftMortgage":
-                assert len(args) == 1
-
-                space = args[0]
-
-                assert isinstance(space, OwnableSpace)
-
-                player.menuLiftMortgage(space)
-
-            if action == "rollDices":
-                assert not player.inJail
-
-                score, double = self.rollDices(player)
-
-                if double:
-                    double_count += 1
-
-                play_again = double
-
-                do_render = player.play(score, double)
-
-                if double_count == 3:
-                    self.renderer.playerMessage(player, "playerGoJailDouble")
-
-                    player.goJail()
-
-                if player.inJail:
-                    play_again = False
-
-                if play_again:
-                    self.renderer.playerPlayAgain(player)
-
-                has_played = True
-
-            elif action == "rollDicesJail":
-                assert player.inJail
-
-                if player.jailTurnCount >= 3:
-                    self.renderer.playerMessage(player, "JailTurn")
-
-                    player.pay(50)
-
-                    score, double = self.rollDices(player)
-
-                    player.getOutJail(score, double)
-
-                    if double:
-                        double_count += 1
-
-                    play_again = double
-
-                score, double = self.rollDices(player)
-
-                if double:
-                    player.getOutJail(score, double)
-                else:
-                    player.jailTurnCount += 1
-
-                play_again = False
-                has_played = True
-
-            elif action == "payJail":
-                assert player.inJail
-
-                player.pay(50)
-
-                score, double = self.rollDices(player)
-
-                player.getOutJail(score, double)
-
-                if double:
-                    double_count += 1
-
-                play_again = double
-
-            elif action == "jail_card":
-                assert player.inJail
-
-                score, double = self.rollDices(player)
-
-                player.getOutJail(score, double)
-
-                if double:
-                    double_count += 1
-
-                play_again = double
-
-            elif action == "buy":
-                if player.ask(self.lang("askBuy", space = player.space)):
-                    player.pay(player.space.price)
-
-                    player.ownedSpaces.append(player.space)
-
-                    player.ownedSpaces.sort(key = lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
-
-                    player.space.owner: Player = player
-
-            elif action == "buyHousesOrHotels":
-                assert len(args) == 2
-
-                space, hotel = args[0], args[1]
-
-                assert isinstance(space, Space_Terrain)
-                assert isinstance(hotel, bool)
-
-                success = space.buyHotel() if hotel else space.buyHouse()
-
-                if success:
-                    if hotel:
-                        self.renderer.playerMessage(player, "buyHotelSuccess", space = space)
-                    else:
-                        self.renderer.playerMessage(player, "buyHouseSuccess", space = space)
-                else:
-                    if hotel:
-                        self.renderer.playerMessage(player, "buyHotelFail", space = space)
-                    else:
-                        self.renderer.playerMessage(player, "buyHouseFail", space = space)
-
-            elif action == "saleHousesOrHotels":
-                self.renderer.playerMessage(player, "notImplemented")
-
-            elif action == "finish":
-                break
         # play_again = True
 
         # while play_again:
