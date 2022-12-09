@@ -19,6 +19,9 @@ RAILROAD_COUNT = len(RAILROAD_RENTS)
 COMPANY_COUNT = 2
 
 
+SPACE_COUNT = 40
+
+
 terrain_data = {}
 
 with open("monopoly/assets/map/terrains", "r") as f:

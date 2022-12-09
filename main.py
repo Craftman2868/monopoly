@@ -25,15 +25,18 @@ def main():
 
     args = parser.parse_args()
 
-    game = Monopoly(playerCount=args.pc, lang=args.lang, map=args.map, debug=args.debug)
+    try:
+        game = Monopoly(playerCount=args.pc, lang=args.lang, map=args.map, debug=args.debug)
 
-    if not args.nn:
-        for pl in game.players:
-            name = input(game.lang("nameOf", player = pl) + ": ").strip()
-            
-            pl.name = name or None
+        if not args.nn:
+            for pl in game.players:
+                name = input(game.lang("nameOf", player = pl) + ": ").strip()
+                
+                pl.name = name or None
 
-    game.run()
+        game.run()
+    except KeyboardInterrupt:
+        print("\r\n\nBye !")
 
 if __name__ == "__main__":
     main()

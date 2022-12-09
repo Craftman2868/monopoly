@@ -2,7 +2,7 @@ from sys import stdin, stdout, stderr, platform
 
 from .dice      import DicePair
 from .player    import Player
-from .space     import Space, OwnableSpace
+from .space     import Space, OwnableSpace, SPACE_COUNT
 
 from typing import Optional, List, Tuple, Any
 
@@ -531,7 +531,7 @@ class Renderer:
                     self.writeLnFlush("Error during conversion to int")
                     continue
 
-                pos %= 39
+                pos %= SPACE_COUNT
 
                 player.pos = pos
 

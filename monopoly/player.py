@@ -1,9 +1,7 @@
 # from .monopoly import monopoly
-from .space import TERRAIN_COUNT_BY_GROUPS, Space, OwnableSpace
+from .space import TERRAIN_COUNT_BY_GROUPS, Space, OwnableSpace, SPACE_COUNT
 
 from typing import Optional, List
-
-SPACE_COUNT = 40
 
 
 class Player:
@@ -138,18 +136,15 @@ class Player:
         self.pos += score
 
         if self.pos >= SPACE_COUNT or self.pos < 0:
+            print(self.pos)
             self.pos %= SPACE_COUNT
+            print(self.pos)
 
             self.receiveSalary()
         
     def moveBack(self, score: int):
-        self.pos -= score
+        self.advance(-score)
 
-        if self.pos >= SPACE_COUNT or self.pos < 0:
-            self.pos %= SPACE_COUNT
-
-            self.receiveSalary()
-    
     def do_space(self, score: int):
         return self.space.on_pass(self, score)
 

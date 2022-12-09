@@ -5,7 +5,7 @@ from .space import (
     Space_Terrain, Space_Railroad, Space_Company,
     Space_Chance, Space_CommunityChest,
 
-    TERRAIN_COUNT_BY_GROUPS, RAILROAD_COUNT, COMPANY_COUNT
+    TERRAIN_COUNT_BY_GROUPS, RAILROAD_COUNT, COMPANY_COUNT, SPACE_COUNT
 )
 # from .monopoly import Monopoly
 
@@ -101,7 +101,7 @@ class Map:
         self.spaces = loadSpaces(self)
     
     def getSpace(self, pos: int):
-        return self.spaces[pos % 39]
+        return self.spaces[pos % SPACE_COUNT]
 
     def getGroupColor(self, gid: int):
         return self._getTerrain(gid, 0).color
