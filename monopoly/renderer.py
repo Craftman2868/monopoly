@@ -344,7 +344,8 @@ class Renderer:
 
         while True:
             self.writeLn()
-            self.writeLn(f"{title} (page {curPage + 1}/{len(pages)}):")
+            pageRender = self.lang("page", page=curPage+1, maxPage=len(pages))
+            self.writeLn(f"{title} ({pageRender}):")
             if zero:
                 self.writeLn(f"    0.\t{zero[1]}")
 

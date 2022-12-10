@@ -11,6 +11,9 @@ TODO:
     - maisons / hotels (à finir)
     - échange
     - enregistrer partie
+    - finir traductions
+    - finir cartes caisse de communauté
+    - créer une classe Menu
 """
 
 

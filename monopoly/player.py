@@ -108,7 +108,6 @@ class Player:
         self.pos = pos
 
     def gotoTerrain(self, gid: int, id: int):
-        print(self.map.getTerrain(gid, id))
         self.goto(self.map.getTerrain(gid, id).pos)
 
     def gotoRailroad(self, id: int):
@@ -136,9 +135,7 @@ class Player:
         self.pos += score
 
         if self.pos >= SPACE_COUNT or self.pos < 0:
-            print(self.pos)
             self.pos %= SPACE_COUNT
-            print(self.pos)
 
             self.receiveSalary()
         

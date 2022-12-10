@@ -97,5 +97,6 @@
     "house": "Maison",
     "hotel": "Hôtel",
     "previous": "Précédent",
-    "next": "Suivant"
+    "next": "Suivant",
+    "page": "page {page}/{maxPage}"
 }
