@@ -551,22 +551,23 @@ class Renderer:
         items = []
         args = []
 
-        if canRollDices and not player.inJail:
-            items.append("rollDices")
-        else:
-            items.append("finish")
-
-        if has_played and isinstance(player.space, OwnableSpace) and player.space.forSale:
-            items.append("buy")
+        if not player.inJail:
+            if canRollDices:
+                items.append("rollDices")
+            else:
+                items.append("finish")
 
         if player.inJail and not has_played:
-            items.append("payJail")
-
             if player.jailTurnCount < 3:
                 items.append("rollDicesJail")
 
+            items.append("payJail")
+
             if "jail_card" in player.cards:
                 items.append("jailCard")
+
+        if has_played and isinstance(player.space, OwnableSpace) and player.space.forSale:
+            items.append("buy")
 
         if len(player.ownedSpaces) != 0:
             if any((not s.mortgage) for s in player.ownedSpaces):
