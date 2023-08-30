@@ -40,7 +40,7 @@
     "pressForRollDices": "Appuyez sur n'importe quelle touche pour lancer les dés...",
     "player": "Joueur {id}",
     "buyRent": "Vous êtes arrivé(e) sur {space.render}, vous devez payer M{rent} de loyer à {space.owner}",
-    "buyTaxe": "Vous êtes arrivé(e) sur {space.render}, vous devez payer une taxe de M{space.amount}",
+    "buyTax": "Vous êtes arrivé(e) sur {space.render}, vous devez payer une taxe de M{space.amount}",
     "salary": "Bravo ! Vous avez reçu M200 de salaire en passant par la case départ",
     "playAgain": "Vous avez fait un double, vous devez donc rejouer",
     "space": "Case",
@@ -75,7 +75,7 @@
         "saleHousesOrHotels": "Vendre des maisons ou des hôtels"
     },
 
-    "notImplemented": "Fonctionnalitée pas encore implémentée",
+    "notImplemented": "{render.italic}Fonctionnalitée pas encore implémentée",
     "cancel": "Annuler",
 
     "colors": {
@@ -98,5 +98,9 @@
     "hotel": "Hôtel",
     "previous": "Précédent",
     "next": "Suivant",
-    "page": "page {page}/{maxPage}"
+    "page": "page {page}/{maxPage}",
+    "buyHotelSuccess": "Vous venez d'acheter un hôtel sur {space.render}.",
+    "buyHouseSuccess": "Vous venez d'acheter une maison sur {space.render}.",
+    "buyHotelFail": "Vous ne pouvez pas acheter d'hôtel sur {space.render}.",
+    "buyHouseFail": "Vous ne pouvez pas acheter de maison sur {space.render}."
 }

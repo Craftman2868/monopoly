@@ -1,7 +1,7 @@
 from .space import (
     Space,
     Space_Go, Space_Jail, Space_FreeParking, Space_GoJail,
-    Space_Taxe,
+    Space_Tax,
     Space_Terrain, Space_Railroad, Space_Company,
     Space_Chance, Space_CommunityChest,
 
@@ -37,7 +37,7 @@ def loadSpace(map: "Map", s: str, pos: int):  # sourcery skip: avoid-builtin-sha
     if type == "go_jail":
         return Space_GoJail(map, pos)
 
-    if type == "taxe":
+    if type == "tax":
         if not args:
             raise ValueError()  ## TODO
 
@@ -45,7 +45,7 @@ def loadSpace(map: "Map", s: str, pos: int):  # sourcery skip: avoid-builtin-sha
 
         id = int(id) - 1  ## TODO check
 
-        return Space_Taxe(map, id, pos)
+        return Space_Tax(map, id, pos)
 
     if type == "terrain":
         if not args:

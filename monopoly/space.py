@@ -46,21 +46,21 @@ class Space:
 
         self.game: "Monopoly" = self.map.game
         self.renderer: "Renderer" = self.game.renderer
-    
+
     @property
     def name(self):
         return self.map.data[self.type]
-    
+
     @property
     def render(self):
         return self.renderer.renderSpace(self)
 
     def on_pass(self, player: "Player", score: Optional[int] = None):
         raise NotImplementedError()
-    
+
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
         return f"<{self.__module__}.{self.__class__.__name__} {self!s}>"
 
@@ -68,9 +68,10 @@ class Space:
 class Space_Go(Space):
     def __init__(self, map: "Map", pos: int):
         super().__init__(map, "go", pos)
-    
+
     def on_pass(self, player: "Player", score: Optional[int] = None):
         return False
+
 
 class Space_Jail(Space):
     def __init__(self, map: "Map", pos: int):
@@ -79,12 +80,14 @@ class Space_Jail(Space):
     def on_pass(self, player: "Player", score: Optional[int] = None):
         return False
 
+
 class Space_FreeParking(Space):
     def __init__(self, map: "Map", pos: int):
         super().__init__(map, "free_parking", pos)
 
     def on_pass(self, player: "Player", score: Optional[int] = None):
         return False
+
 
 class Space_GoJail(Space):
     def __init__(self, map: "Map", pos: int):
@@ -98,23 +101,23 @@ class Space_GoJail(Space):
         return True
 
 
-class Space_Taxe(Space):
+class Space_Tax(Space):
     def __init__(self, map: "Map", id: int, pos: int):
-        super().__init__(map, "taxe", pos)
+        super().__init__(map, "tax", pos)
 
         if id < 0 or id >= len(TAXE_AMOUNTS):
-            raise ValueError()  ## TODO
+            raise ValueError()  # TODO
 
         self.id: int = id
 
         self.amount: int = TAXE_AMOUNTS[self.id]
-    
+
     @property
     def name(self):
         return self.map.data[self.type][self.id]
 
     def on_pass(self, player: "Player", score: Optional[int] = None):
-        self.renderer.playerMessage(player, "buyTaxe", space = self)
+        self.renderer.playerMessage(player, "buyTax", space=self)
 
         player.pay(self.amount)
 
@@ -130,7 +133,7 @@ class OwnableSpace(Space):
         self.owner: Optional["Player"] = None
 
         self.mortgage: bool = False
-    
+
     @property
     def mortgagePrice(self):
         return int(self.price / 2)
@@ -145,14 +148,15 @@ class OwnableSpace(Space):
 
     def getRent(self, player: "Player", score: Optional[int] = None):
         raise NotImplementedError()
-    
+
     def on_pass(self, player: "Player", score: Optional[int] = None):
         # sourcery skip: merge-else-if-into-elif
         if self.owner:
             if player != self.owner and not self.mortgage:
                 rent: int = self.getRent(player, score)
 
-                self.game.renderer.playerMessage(player, "buyRent", space = self, rent = rent)
+                self.game.renderer.playerMessage(
+                    player, "buyRent", space=self, rent=rent)
 
                 player.pay(rent, self.owner)
 
@@ -175,6 +179,7 @@ class OwnableSpace(Space):
     def __str__(self):
         return self.name + (f" ({self.owner!s})" if self.owner else "")
 
+
 class Space_Terrain(OwnableSpace):
     def __init__(self, map: "Map", group_id: int, id: int, pos: int):
         super().__init__(map, "terrain", pos)
@@ -187,17 +192,17 @@ class Space_Terrain(OwnableSpace):
         self.price: int = int(self.data[1])
 
         self.color: str = self.data[0]
-    
+
         self.houseCount: int = 0
-        
+
         self.hotelCount: int = 0
 
     @property
     def housePrice(self):
         return int(self.data[8])
-    
+
     hotelPrice = housePrice
-    
+
     @property
     def fullId(self):
         return f"{self.group_id + 1}:{self.id + 1}"
@@ -220,9 +225,9 @@ class Space_Terrain(OwnableSpace):
             self.houseCount += 1
 
             return True
-        
+
         return False
-    
+
     def buyHotel(self):
         if not self.owner.hasGroup(self.group_id):
             return False
@@ -235,9 +240,9 @@ class Space_Terrain(OwnableSpace):
             self.houseCount = 0
 
             return True
-        
+
         return False
-    
+
     def getRent(self, player: "Player", score: Optional[int] = None):
         rents = [*map(int, self.data[2:8])]
 
@@ -258,10 +263,10 @@ class Space_Railroad(OwnableSpace):
         super().__init__(map, "railroad", pos)
 
         if id < 0 or id > 4:
-            raise ValueError()  ## TODO
+            raise ValueError()  # TODO
 
         self.id: int = id
-    
+
         self.price: int = RAILROAD_PRICE
 
     def getRent(self, player: "Player", score: Optional[int] = None):
@@ -281,12 +286,12 @@ class Space_Company(OwnableSpace):
         super().__init__(map, "company", pos)
 
         if id < 0 or id > 1:
-            raise ValueError()  ## TODO
+            raise ValueError()  # TODO
 
         self.id: int = id
-    
+
         self.price: int = COMPANY_PRICE
-    
+
     def getRent(self, player: "Player", score: int):
         companyCount: int = self.owner.countSpaceType(Space_Company)
 
@@ -322,6 +327,7 @@ class Space_Chance(Space):
 
         return True
 
+
 class Space_CommunityChest(Space):
     def __init__(self, map: "Map", pos: int):
         super().__init__(map, "community_chest", pos)
@@ -340,11 +346,11 @@ class Space_CommunityChest(Space):
 # class Space_TEMP(Space):  ############ T#O#D#O
 #     def __init__(self, map: "Map", pos: int):
 #         super().__init__(map, "TEMP", pos)
-    
+
 #     @property
 #     def name(self):
 #         return "TEMP"
-    
+
 #     def on_pass(self, player: "Player", score: Optional[int] = None):
 #         print("NOT IMPLEMENTED YET")
 

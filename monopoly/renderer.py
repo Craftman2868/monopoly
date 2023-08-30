@@ -33,8 +33,11 @@ else:
 ESC = "\033"
 CSI = ESC + "["
 
+RESET = CSI + "0m"
 BOLD = CSI + "1m"
+DIM = CSI + "2m"
 ITALIC = CSI + "3m"
+UNDERLINED = CSI + "4m"
 
 rgb_to_code = lambda r, g, b: f"{CSI}38;2;{r};{g};{b}m"
 
@@ -53,7 +56,20 @@ COLOR_TO_CODE = {
     "bright_white": CSI + "97m",
 }
 
-RESET = CSI + "0m"
+class Color:
+    pass
+
+for name, color in COLOR_TO_CODE.items():
+    setattr(Color, name, color)
+
+class RENDER:
+    RESET = reset = RESET
+    BOLD = bold = BOLD
+    DIM = dim = DIM
+    ITALIC = italic = ITALIC
+    UNDERLINED = underlined = UNDERLINED
+
+    COLOR = color = Color
 
 COLOR_TERRAINS = True
 
@@ -565,6 +581,8 @@ class Renderer:
 
             if "jail_card" in player.cards:
                 items.append("jailCard")
+        elif player.inJail and has_played:
+            items.append("finish")
 
         if has_played and isinstance(player.space, OwnableSpace) and player.space.forSale:
             items.append("buy")
@@ -589,7 +607,7 @@ class Renderer:
 
         if player.inJail:
             if player.jailTurnCount >= 3:
-                self.renderer.playerMessage(self, "maxJailTurn")
+                self.playerMessage(player, "maxJailTurn")
             else:
                 self.playerMessage(player, "playerInJail")
 

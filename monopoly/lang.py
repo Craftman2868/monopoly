@@ -2,6 +2,8 @@ import json
 
 from typing import Dict
 
+from .renderer import RENDER
+
 
 DEFAULT_LANG = "english"
 
@@ -31,7 +33,7 @@ class Lang:
         if isinstance(data, dict):
             return Lang(f"{self._name}.'{_item}'", data)
 
-        return data.format(**kwargs)
+        return data.format(**{**kwargs, "render": RENDER}) + RENDER.reset
 
     def __repr__(self):
         return f"<{self.__module__}.{self.__class__.__name__} {self._name}>"

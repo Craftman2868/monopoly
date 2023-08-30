@@ -2,7 +2,7 @@ go
 terrain 1:1
 community_chest
 terrain 1:2
-taxe 1
+tax 1
 railroad 1
 terrain 2:1
 chance
@@ -39,5 +39,5 @@ terrain 7:3
 railroad 4
 chance
 terrain 8:1
-taxe 2
+tax 2
 terrain 8:2

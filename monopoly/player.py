@@ -28,33 +28,38 @@ class Player:
     @property
     def renderer(self):
         return self.game.renderer
-    
+
     @property
     def space(self):
         return self.game.map.getSpace(self.pos)
-    
+
     @property
     def ownedGroups(self):
-        return [*(gid for gid in range(8) if self.hasGroup(gid))]
-    
+        return [gid for gid in range(8) if self.hasGroup(gid)]
+
+    def message(self, _message: str, **kwargs: object):
+        return self.renderer.playerMessage(self, _message, **kwargs)
+
     def giveSpace(self, space: OwnableSpace):
         assert isinstance(space, OwnableSpace)
 
-        self.ownedSpaces.append(space)
+        if space not in self.ownedSpaces:
+            self.ownedSpaces.append(space)
 
         space.owner = self
-    
+
     def countHouses(self):
         return sum(s.houseCount for s in self.ownedSpaces if s.type == "terrain")
 
     def countHotels(self):
         return sum(s.hotelCount for s in self.ownedSpaces if s.type == "terrain")
-    
+
     def hasGroup(self, gid: int):
         if gid < 0 or gid >= len(TERRAIN_COUNT_BY_GROUPS):
             return False
 
-        terrainCount = sum(s.type == "terrain" and s.group_id == gid for s in self.ownedSpaces)
+        terrainCount = sum(s.type == "terrain" and s.group_id ==
+                           gid for s in self.ownedSpaces)
 
         assert terrainCount <= TERRAIN_COUNT_BY_GROUPS[gid]
 
@@ -68,10 +73,10 @@ class Player:
 
     def ask(self, question: str, yn: bool = True):
         return self.renderer.askPlayerQuestion(self, question, yn)
-    
+
     def render(self, score: Optional[int] = None, double: Optional[bool] = None):
         self.renderer.renderPlayer(self, score, double)
-    
+
     def play(self, score: int, double: bool):
         do_render = False
 
@@ -93,11 +98,11 @@ class Player:
             self.dead = True
 
             raise NotImplementedError("Player dead")
-        
+
         return do_render
 
     def receiveSalary(self):
-        self.renderer.playerMessage(self, "salary")
+        self.message("salary")
 
         self.give(200)
 
@@ -112,7 +117,7 @@ class Player:
 
     def gotoRailroad(self, id: int):
         self.goto(self.map.getRailroad(id).pos)
-    
+
     def getNearest(self, type: str):
         pos = self.pos + 1
 
@@ -123,14 +128,14 @@ class Player:
                 return s
 
             pos += 1
-    
+
     def gotoNearest(self, type: str):
         if s := self.getNearest(type):
             self.goto(s.pos)
 
     def gotoTerrain(self, gid: int, id: int):
         self.goto(self.map.getTerrain(gid, id).pos)
-    
+
     def advance(self, score: int):  # sourcery skip: class-extract-method
         self.pos += score
 
@@ -138,7 +143,7 @@ class Player:
             self.pos %= SPACE_COUNT
 
             self.receiveSalary()
-        
+
     def moveBack(self, score: int):
         self.advance(-score)
 
@@ -147,11 +152,11 @@ class Player:
 
     def give(self, amount: int):
         self.money += amount
-    
+
     def pay(self, amount: int, to: Optional["Player"] = None):
         self.money -= amount
 
-        ## TODO: check enough money
+        # TODO: check enough money
 
         if self.money < 0:
             self.dead = True
@@ -160,7 +165,7 @@ class Player:
 
         if to:
             to.give(amount)
-    
+
     def giveCard(self, card: str):
         self.cards.append(card)
 
@@ -171,7 +176,7 @@ class Player:
         self.inJail = True
 
         self.pos = 10  # JAIL
-    
+
     def getOutJail(self, score: int, double: int):
         self.inJail = False
         self.jailTurnCount = 0
@@ -183,48 +188,51 @@ class Player:
 
         space.mortgage = True
 
-        self.renderer.playerMessage(self, "playerMortgageProp", space = space)
+        self.message("playerMortgageProp", space=space)
 
         self.give(space.mortgagePrice)
-    
+
     def menuRemoveMortgage(self, space: Space):
         assert space.mortgage == True
 
         space.mortgage = False
 
-        self.renderer.playerMessage(self, "playerRemoveMortgageProp", space = space)
+        self.message("playerRemoveMortgageProp", space=space)
 
         self.give(space.removeMortgagePrice)
-    
+
     def buySpace(self):
         assert isinstance(self.space, OwnableSpace)
 
-        if self.ask(self.lang("askBuy", space = self.space)):
+        if self.ask(self.lang("askBuy", space=self.space)):
             self.pay(self.space.price)
 
             self.ownedSpaces.append(self.space)
 
-            self.ownedSpaces.sort(key = lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
+            self.ownedSpaces.sort(
+                key=lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
 
             self.space.owner: Player = self
-    
+
     def doAction(self, action: str, args: List[Any], vars: Dict[str, Any]):
-        assert action in {"mortgage", "removeMortgage", "buy", "rollDices", "rollDicesJail", "payJail", "jailCard", "finish", "pass", "buyHousesOrHotels", "saleHousesOrHotels"}
+        assert action in {"mortgage", "removeMortgage", "buy", "rollDices", "rollDicesJail",
+                          "payJail", "jailCard", "finish", "pass", "buyHousesOrHotels", "saleHousesOrHotels"}
 
         if action == "buy":
-            if self.ask(self.renderer.lang("askBuy", space = self.space)):
+            if self.ask(self.renderer.lang("askBuy", space=self.space)):
                 self.pay(self.space.price)
 
                 self.ownedSpaces.append(self.space)
 
-                self.ownedSpaces.sort(key = lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
+                self.ownedSpaces.sort(
+                    key=lambda s: s.pos if s.type == "terrain" else 99 + len(s.type) + s.id)
 
                 self.space.owner: Player = self
 
         elif action == "buyHousesOrHotels":
             self.menuBuyHousesOrHotels(args)
         elif action == "saleHousesOrHotels":
-            self.renderer.playerMessage(self, "notImplemented")
+            self.message("notImplemented")
 
         elif action == "jail_card":
             assert self.inJail
@@ -243,7 +251,7 @@ class Player:
             self.menuMortgage(space)
 
         elif action == "payJail":
-            self.menuPayJail()
+            self.menuPayJail(vars)
         elif action == "removeMortgage":
             space = self.menuArgsGetSpace(args, vars)
             self.menuRemoveMortgage(space)
@@ -284,7 +292,7 @@ class Player:
         vars["do_render"] = self.play(score, double)
 
         if vars["double_count"] == 3:
-            self.renderer.playerMessage(self, "playerGoJailDouble")
+            self.message("playerGoJailDouble")
 
             self.goJail()
 
@@ -300,6 +308,8 @@ class Player:
         assert self.inJail
 
         self.pay(50)
+
+        self.message("hadPaidJail")
 
         score, double = self.game.rollDices(self)
 
@@ -322,14 +332,14 @@ class Player:
 
         if success:
             if hotel:
-                self.renderer.playerMessage(self, "buyHotelSuccess", space = space)
+                self.message("buyHotelSuccess", space=space)
             else:
-                self.renderer.playerMessage(self, "buyHouseSuccess", space = space)
+                self.message("buyHouseSuccess", space=space)
         else:
             if hotel:
-                self.renderer.playerMessage(self, "buyHotelFail", space = space)
+                self.message("buyHotelFail", space=space)
             else:
-                self.renderer.playerMessage(self, "buyHouseFail", space = space)
+                self.message("buyHouseFail", space=space)
 
     def menuArgsGetSpace(self, args):
         assert len(args) == 1
@@ -340,9 +350,8 @@ class Player:
 
         return result
 
-
     def __repr__(self):
-        return self.name or self.game.lang("player", id = self.id + 1)
+        return self.name or self.game.lang("player", id=self.id + 1)
 
 
 class DebugPlayer(Player):

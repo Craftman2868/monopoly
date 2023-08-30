@@ -40,7 +40,7 @@
     "pressForRollDices": "Press any key to roll dices...",
     "player": "Player {id}",
     "buyRent": "You arrived on {space.render}, you have to pay M{rent} of rent to {space.owner}",
-    "buyTaxe": "You arrived on {space.render}, you have to pay M{space.amount} of taxe",
+    "buyTax": "You arrived on {space.render}, you have to pay M{space.amount} of tax",
     "salary": "Congratulation! You receive M200 of salary",
     "playAgain": "You got a double, you must play again",
     "space": "Space",
