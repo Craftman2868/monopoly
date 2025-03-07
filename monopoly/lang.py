@@ -2,7 +2,7 @@ import json
 
 from typing import Dict
 
-from .renderer import RENDER
+from .renderer import RENDER, CSI
 
 
 DEFAULT_LANG = "english"
@@ -33,7 +33,12 @@ class Lang:
         if isinstance(data, dict):
             return Lang(f"{self._name}.'{_item}'", data)
 
-        return data.format(**{**kwargs, "render": RENDER}) + RENDER.reset
+        res = data.format(**{**kwargs, "render": RENDER})
+
+        if CSI in res:
+            res += RENDER.reset
+
+        return res
 
     def __repr__(self):
         return f"<{self.__module__}.{self.__class__.__name__} {self._name}>"
