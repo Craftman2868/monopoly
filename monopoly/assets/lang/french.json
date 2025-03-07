@@ -60,7 +60,7 @@
     "menu": {
         "menu": "Menu",
         "rollDices": "Lancer les dés",
-        "rollDicesJail": "Lancer les dés et tanter de faire un double pour sortir de prison",
+        "rollDicesJail": "Lancer les dés et tenter de faire un double pour sortir de prison",
         "buy": "Acheter {player.space.render} pour M{player.space.price}",
         "mortgage": "Hypothéquer une propriété",
         "removeMortgage": "Lever l'hypothèque d'une propriété",
@@ -102,5 +102,6 @@
     "buyHotelSuccess": "Vous venez d'acheter un hôtel sur {space.render}.",
     "buyHouseSuccess": "Vous venez d'acheter une maison sur {space.render}.",
     "buyHotelFail": "Vous ne pouvez pas acheter d'hôtel sur {space.render}.",
-    "buyHouseFail": "Vous ne pouvez pas acheter de maison sur {space.render}."
+    "buyHouseFail": "Vous ne pouvez pas acheter de maison sur {space.render}.",
+    "hadPaidJail": "Vous avez payé M50 pour sortir de prison."
 }
